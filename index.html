@@ -31,6 +31,12 @@
         body { font-family: 'Inter', sans-serif; }
         .glass-panel { background: white; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         .login-overlay { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(8px); }
+        
+        /* Custom Scrollbar for Modal */
+        .modal-scroll::-webkit-scrollbar { width: 8px; }
+        .modal-scroll::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #c7c7c7; border-radius: 4px; }
+        .modal-scroll::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
     </style>
 </head>
 <body class="p-4 md:p-8 antialiased text-slate-800 relative min-h-screen">
@@ -123,7 +129,7 @@
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     </span>
-                    <input type="text" id="search" placeholder="Search customer, item..." onkeyup="renderOrders()" class="w-full border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent shadow-sm bg-white transition">
+                    <input type="text" id="search" placeholder="Search customer..." onkeyup="renderOrders()" class="w-full border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent shadow-sm bg-white transition">
                 </div>
             </div>
             <div class="overflow-x-auto">
@@ -153,15 +159,17 @@
     </div>
 
     <div id="orderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 transition-all duration-300">
-        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl scale-100 transform transition-transform">
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl scale-100 transform transition-transform modal-scroll">
             <div class="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white/95 z-10 backdrop-blur">
                 <h2 class="text-xl font-bold text-slate-800">Order Details</h2>
-                <button onclick="closeOrderModal()" class="text-slate-400 hover:text-slate-600 p-2 hover:bg-slate-100 rounded-full transition">
+                <button type="button" onclick="closeOrderModal()" class="text-slate-400 hover:text-slate-600 p-2 hover:bg-slate-100 rounded-full transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
+            
             <form id="orderForm" onsubmit="saveOrder(event)" class="p-8 space-y-8">
                 <input type="hidden" id="editId">
+                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Customer Name</label>
@@ -177,44 +185,54 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Current Status</label>
-                        <div class="relative">
-                            <select id="orderStatus" class="w-full border-slate-200 rounded-xl p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition shadow-sm appearance-none cursor-pointer">
-                                <option value="Pending">🕒 Pending</option>
-                                <option value="Processing">✂️ Processing</option>
-                                <option value="Completed">✅ Completed</option>
-                                <option value="Delivered">📦 Delivered</option>
-                            </select>
-                            <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                            </div>
-                        </div>
+                        <select id="orderStatus" class="w-full border-slate-200 rounded-xl p-3 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-brand-500 outline-none transition shadow-sm cursor-pointer">
+                            <option value="Pending">🕒 Pending</option>
+                            <option value="Processing">✂️ Processing</option>
+                            <option value="Completed">✅ Completed</option>
+                            <option value="Delivered">📦 Delivered</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <span class="p-1 bg-white rounded shadow-sm text-slate-600">📏</span> Body Measurements (Inches)
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Length</label><input type="text" id="mLength" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Chest/Bust</label><input type="text" id="mBust" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Waist</label><input type="text" id="mWaist" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Shoulder</label><input type="text" id="mShoulder" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Sleeve Len</label><input type="text" id="mSleeve" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Neck (F/B)</label><input type="text" id="mNeck" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Hip</label><input type="text" id="mHip" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Other/Note</label><input type="text" id="mOther" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
                     </div>
                 </div>
 
                 <div class="p-6 bg-brand-50/50 rounded-2xl border border-brand-100/50">
                     <h3 class="font-bold text-brand-800 mb-5 text-sm uppercase flex items-center gap-2">
-                        <span class="p-1 bg-white rounded shadow-sm text-brand-600">💰</span> Payment Details
+                        <span class="p-1 bg-white rounded shadow-sm text-brand-600">💰</span> Costing & Billing
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div>
-                            <label class="text-xs font-bold text-slate-500">Total Expenses</label>
-                            <input type="number" id="totalCost" value="0" class="w-full border-slate-200 rounded-lg p-2.5 mt-1 focus:ring-brand-500 focus:border-brand-500 shadow-sm outline-none">
-                            <p class="text-[10px] text-slate-400 mt-1">Fabric + Labor cost</p>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                        <div><label class="text-xs font-bold text-slate-500">Fabric Cost</label><input type="number" id="costFabric" value="0" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-xs font-bold text-slate-500">Dyeing Cost</label><input type="number" id="costDye" value="0" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        <div><label class="text-xs font-bold text-slate-500">Labor/Stitching</label><input type="number" id="costLabor" value="0" class="w-full border-slate-200 rounded-lg p-2 mt-1 focus:ring-brand-500 outline-none"></div>
+                        
+                        <div class="md:col-start-1 md:col-end-3 mt-2">
+                            <label class="text-xs font-bold text-brand-700">Total Customer Bill</label>
+                            <input type="number" id="salePrice" required class="w-full border-brand-200 border-2 rounded-lg p-2.5 mt-1 font-bold text-slate-800 focus:ring-brand-500 outline-none shadow-sm text-lg">
                         </div>
-                        <div>
-                            <label class="text-xs font-bold text-brand-700">Total Bill Amount</label>
-                            <input type="number" id="salePrice" required class="w-full border-brand-200 border-2 rounded-lg p-2.5 mt-1 font-bold text-slate-800 focus:ring-brand-500 outline-none shadow-sm">
-                        </div>
-                        <div>
+                        <div class="md:col-span-2 mt-2">
                             <label class="text-xs font-bold text-emerald-700">Advance Received</label>
-                            <input type="number" id="advance" value="0" class="w-full border-emerald-200 border-2 rounded-lg p-2.5 mt-1 font-bold text-emerald-700 focus:ring-emerald-500 outline-none shadow-sm">
+                            <input type="number" id="advance" value="0" class="w-full border-emerald-200 border-2 rounded-lg p-2.5 mt-1 font-bold text-emerald-700 focus:ring-emerald-500 outline-none shadow-sm text-lg">
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="closeOrderModal()" class="px-6 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100 font-medium transition">Cancel</button>
-                    <button type="submit" class="px-8 py-2.5 bg-brand-600 text-white rounded-xl hover:bg-brand-700 font-bold shadow-lg shadow-brand-200 transition transform active:scale-95">Save Record</button>
+                    <button type="button" onclick="closeOrderModal()" class="px-6 py-2.5 rounded-xl text-slate-500 hover:bg-slate-100 font-medium transition cursor-pointer">Cancel</button>
+                    <button type="submit" class="px-8 py-2.5 bg-brand-600 text-white rounded-xl hover:bg-brand-700 font-bold shadow-lg shadow-brand-200 transition transform active:scale-95 cursor-pointer">Save Order</button>
                 </div>
             </form>
         </div>
@@ -229,7 +247,7 @@
                     </span> 
                     Share Invoice
                 </h3>
-                <button onclick="document.getElementById('whatsappModal').classList.add('hidden')" class="text-slate-400 hover:bg-slate-100 p-1 rounded-full">&times;</button>
+                <button type="button" onclick="document.getElementById('whatsappModal').classList.add('hidden')" class="text-slate-400 hover:bg-slate-100 p-1 rounded-full">&times;</button>
             </div>
             
             <p class="text-sm font-medium text-slate-500 mb-2">Customer WhatsApp Number</p>
@@ -245,7 +263,7 @@
 
     <script>
         // ======================================================
-        // FIREBASE CONFIGURATION (Already working correctly)
+        // FIREBASE CONFIGURATION
         // ======================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCefM_p_lOAJilN0jDt3T5R5-FP4eKX9Ng",
@@ -258,7 +276,6 @@
             databaseURL: "https://boutique-manager-hav-default-rtdb.firebaseio.com"
         };
 
-        // Initialize Firebase
         try {
             firebase.initializeApp(firebaseConfig);
         } catch(e) {
@@ -275,7 +292,6 @@
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider).catch(error => {
                 alert("Login Failed: " + error.message);
-                console.error(error);
             });
         }
 
@@ -317,11 +333,25 @@
             
             if(editId) {
                 const o = orders.find(x => x.id == editId);
+                // Basic
                 document.getElementById('custName').value = o.customer;
                 document.getElementById('custPhone').value = o.phone || '';
                 document.getElementById('itemType').value = o.item;
                 document.getElementById('orderStatus').value = o.status;
-                document.getElementById('totalCost').value = o.cost;
+                // Measurements (Safe Navigation)
+                document.getElementById('mLength').value = o.measurements?.len || '';
+                document.getElementById('mBust').value = o.measurements?.bust || '';
+                document.getElementById('mWaist').value = o.measurements?.waist || '';
+                document.getElementById('mShoulder').value = o.measurements?.shoulder || '';
+                document.getElementById('mSleeve').value = o.measurements?.sleeve || '';
+                document.getElementById('mNeck').value = o.measurements?.neck || '';
+                document.getElementById('mHip').value = o.measurements?.hip || '';
+                document.getElementById('mOther').value = o.measurements?.other || '';
+                // Costs
+                document.getElementById('costFabric').value = o.costs?.fabric || 0;
+                document.getElementById('costDye').value = o.costs?.dye || 0;
+                document.getElementById('costLabor').value = o.costs?.labor || 0;
+                // Bill
                 document.getElementById('salePrice').value = o.salePrice;
                 document.getElementById('advance').value = o.advance;
             }
@@ -336,9 +366,15 @@
             e.preventDefault();
             if(!currentUser) return alert("Please login first");
 
+            // Gather Financials
             const sale = parseFloat(document.getElementById('salePrice').value) || 0;
-            const cost = parseFloat(document.getElementById('totalCost').value) || 0;
             const advance = parseFloat(document.getElementById('advance').value) || 0;
+            
+            const costFabric = parseFloat(document.getElementById('costFabric').value) || 0;
+            const costDye = parseFloat(document.getElementById('costDye').value) || 0;
+            const costLabor = parseFloat(document.getElementById('costLabor').value) || 0;
+            const totalCost = costFabric + costDye + costLabor;
+
             const editId = document.getElementById('editId').value;
             const id = editId ? parseInt(editId) : Date.now();
 
@@ -349,10 +385,25 @@
                 phone: document.getElementById('custPhone').value,
                 item: document.getElementById('itemType').value,
                 status: document.getElementById('orderStatus').value,
-                cost: cost,
+                measurements: {
+                    len: document.getElementById('mLength').value,
+                    bust: document.getElementById('mBust').value,
+                    waist: document.getElementById('mWaist').value,
+                    shoulder: document.getElementById('mShoulder').value,
+                    sleeve: document.getElementById('mSleeve').value,
+                    neck: document.getElementById('mNeck').value,
+                    hip: document.getElementById('mHip').value,
+                    other: document.getElementById('mOther').value
+                },
+                costs: {
+                    fabric: costFabric,
+                    dye: costDye,
+                    labor: costLabor
+                },
+                cost: totalCost, // Legacy support for stats
                 salePrice: sale,
                 advance: advance,
-                profit: sale - cost
+                profit: sale - totalCost
             };
 
             db.ref('users/' + currentUser.uid + '/orders/' + id).set(orderData)
@@ -388,8 +439,16 @@
             doc.text(order.customer, 14, 66);
             if(order.phone) doc.text("Ph: " + order.phone, 14, 72);
 
+            // Measurements in Invoice (Optional)
+            if(order.measurements) {
+                 const m = order.measurements;
+                 doc.setFontSize(9); doc.setTextColor(100);
+                 const mText = `Measurements: L:${m.len} B:${m.bust} W:${m.waist} Sh:${m.shoulder}`;
+                 doc.text(mText, 14, 80);
+            }
+
             doc.autoTable({
-                startY: 85,
+                startY: 90,
                 head: [['Description', 'Status', 'Total Price']],
                 body: [[order.item, order.status, "Rs. " + order.salePrice.toLocaleString()]],
                 theme: 'grid',
@@ -399,6 +458,7 @@
 
             let finalY = doc.lastAutoTable.finalY + 10;
             const rightX = 150; const valX = 180;
+            doc.setTextColor(0,0,0);
             doc.text("Subtotal:", rightX, finalY); doc.text(order.salePrice.toLocaleString(), valX, finalY, { align: 'right' });
             doc.text("Advance Paid:", rightX, finalY + 6); doc.text("-" + (order.advance || 0).toLocaleString(), valX, finalY + 6, { align: 'right' });
             doc.setFont(undefined, 'bold');
