@@ -23,9 +23,9 @@
 
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: #fdf2f8; /* Soft Rose Base */
+            background-color: #fdf2f8; 
             overflow-x: hidden;
-            color: #4a044e; /* Deep Burgundy Text */
+            color: #4a044e; 
         }
 
         /* --- VIBRANT FLORAL PARALLAX BACKGROUND --- */
@@ -36,17 +36,14 @@
             width: 120%;
             height: 120%;
             z-index: -1;
-            /* Floral Pattern SVG */
             background-image: 
                 url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23db2777' fill-opacity='0.15' fill-rule='evenodd'/%3E%3C/svg%3E"),
                 radial-gradient(circle at 80% 20%, rgba(232, 121, 249, 0.4), transparent 40%),
                 radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.3), transparent 40%);
-            /* Movement Logic based on mouse */
             transform: translate(calc(var(--mouse-x) * -40px), calc(var(--mouse-y) * -40px));
             transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
 
-        /* Glassmorphism Cards */
         .card { 
             background: rgba(255, 255, 255, 0.75); 
             backdrop-filter: blur(16px);
@@ -57,8 +54,6 @@
         }
 
         .heading-font { font-family: 'Playfair Display', serif; }
-
-        /* Custom Tabs */
         .tab-btn { position: relative; transition: all 0.3s; }
         .tab-btn::after {
             content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px;
@@ -67,7 +62,6 @@
         .tab-active { color: #9333ea; font-weight: 700; }
         .tab-active::after { width: 100%; }
 
-        /* Buttons */
         .btn-gradient {
             background-image: linear-gradient(135deg, #d946ef 0%, #8b5cf6 100%);
             transition: all 0.3s ease;
@@ -78,13 +72,11 @@
             box-shadow: 0 10px 20px -10px rgba(147, 51, 234, 0.5);
         }
 
-        /* Status Pills */
         .status-pending { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
         .status-processing { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
         .status-completed { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
         .status-delivered { background: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
 
-        /* Input Fields */
         input, select, textarea {
             background: rgba(255, 255, 255, 0.9);
             border: 1px solid #e5e7eb;
@@ -325,7 +317,22 @@
                     <div class="bg-white p-4 rounded-xl border border-violet-100 mb-4 shadow-sm">
                         <label class="block text-xs font-bold text-violet-400 uppercase mb-2">Fabric Calculator</label>
                         <div class="grid grid-cols-3 gap-4">
-                            <div><input type="text" id="fabricType" placeholder="Type" class="w-full rounded p-2 text-sm border-violet-100"></div>
+                            <div>
+                                <select id="fabricType" class="w-full rounded p-2 text-sm border-violet-100">
+                                    <option value="" disabled selected>Select Fabric</option>
+                                    <option value="Silk">Silk</option>
+                                    <option value="Cotton">Cotton</option>
+                                    <option value="Georgette">Georgette</option>
+                                    <option value="Velvet">Velvet</option>
+                                    <option value="Organza">Organza</option>
+                                    <option value="Net">Net</option>
+                                    <option value="Crepe">Crepe</option>
+                                    <option value="Linen">Linen</option>
+                                    <option value="Chiffon">Chiffon</option>
+                                    <option value="Satin">Satin</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
                             <div><input type="number" id="fabricPricePerM" placeholder="Price/M" class="w-full rounded p-2 text-sm border-violet-100" oninput="calcFabric()"></div>
                             <div><input type="number" id="fabricMeters" placeholder="Meters" class="w-full rounded p-2 text-sm border-violet-100" oninput="calcFabric()"></div>
                         </div>
@@ -382,7 +389,6 @@
     </div>
 
     <script>
-        // --- MOUSE MOVEMENT LOGIC ---
         document.addEventListener('mousemove', (e) => {
             const x = e.clientX / window.innerWidth;
             const y = e.clientY / window.innerHeight;
@@ -390,7 +396,6 @@
             document.body.style.setProperty('--mouse-y', y);
         });
 
-        // --- FIREBASE CONFIG (SAME AS BEFORE) ---
         const firebaseConfig = {
             apiKey: "AIzaSyCefM_p_lOAJilN0jDt3T5R5-FP4eKX9Ng",
             authDomain: "boutique-manager-hav.firebaseapp.com",
@@ -408,7 +413,6 @@
         let currentUser = null;
         let orders = [];
 
-        // --- AUTH & INIT ---
         const safe = (str) => str ? String(str).replace(/</g, '&lt;') : '';
         function googleLogin() { auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(e => alert(e.message)); }
         function logout() { if(confirm("Log out?")) { auth.signOut(); location.reload(); } }
@@ -429,7 +433,6 @@
             }
         });
 
-        // --- LOGIC ---
         function calcFabric() {
             const price = parseFloat(document.getElementById('fabricPricePerM').value) || 0;
             const meter = parseFloat(document.getElementById('fabricMeters').value) || 0;
@@ -546,7 +549,6 @@
 
         function deleteOrder(id) { if(confirm('Delete record?')) db.ref('users/' + currentUser.uid + '/orders/' + id).remove(); }
 
-        // --- RENDER & ALERTS ---
         function checkDeadlines() {
             const container = document.getElementById('urgent-orders');
             const alertBox = document.getElementById('urgent-container');
@@ -582,7 +584,7 @@
         }
 
         function openOrderModal(editId=null) {
-            document.querySelectorAll('#orderModal input, #orderModal textarea').forEach(i=>i.value='');
+            document.querySelectorAll('#orderModal input, #orderModal textarea, #orderModal select').forEach(i=>i.value='');
             document.getElementById('designPreview').classList.add('hidden');
             document.getElementById('uploadIcon').classList.remove('hidden');
             document.getElementById('uploadText').innerText = "Click to upload Design/Fabric photo";
@@ -704,7 +706,6 @@
             });
         }
 
-        // --- UTILS ---
         function switchTab(t){ ['dashboard','orders','analytics'].forEach(s=>{ document.getElementById('section-'+s).classList.add('hidden'); document.getElementById('tab-'+s).classList.remove('tab-active'); }); document.getElementById('section-'+t).classList.remove('hidden'); document.getElementById('tab-'+t).classList.add('tab-active'); if(t==='analytics') renderAnalytics(); if(t==='dashboard') { renderDashboard(); checkDeadlines(); } }
         function updateStats(){ const rev=orders.reduce((s,o)=>s+(o.salePrice||0),0); const pro=orders.reduce((s,o)=>s+(o.profit||0),0); const pen=orders.filter(o=>o.status==='Pending'||o.status==='Processing').length; document.getElementById('stat-revenue').innerText=`₹${rev.toLocaleString()}`; document.getElementById('stat-profit').innerText=`₹${pro.toLocaleString()}`; document.getElementById('stat-pending').innerText=pen; document.getElementById('stat-margin').innerText=rev>0?(pro/rev*100).toFixed(1)+'%':'0%'; }
         function renderDashboard(){ const c=document.getElementById('quick-orders'); c.innerHTML=''; orders.slice(0,6).forEach(o=>{ c.innerHTML+=`<div onclick="switchTab('orders')" class="p-4 border-l-4 border-fuchsia-400 bg-white/80 rounded-r-xl flex justify-between items-center hover:bg-white cursor-pointer transition shadow-sm"><div><p class="font-bold text-slate-800 text-sm">${safe(o.customer)}</p><p class="text-xs text-slate-500">${safe(o.item)}</p></div><span class="text-[10px] font-bold px-2 py-1 rounded ${getStatusClass(o.status)}">${safe(o.status)}</span></div>`}); }
@@ -730,7 +731,6 @@
         function renderProgressBar(l,v,c,p){ return `<div class="space-y-1"><div class="flex justify-between text-xs font-bold text-slate-600"><span class="uppercase tracking-wide">${l}</span><span>₹${v.toLocaleString()} (${p}%)</span></div><div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden"><div class="${c} h-2.5 rounded-full transition-all duration-500" style="width:${p}%"></div></div></div>`; }
         function getStatusClass(s) { if(s=='Pending')return'status-pending'; if(s=='Processing')return'status-processing'; if(s=='Completed')return'status-completed'; return 'status-delivered'; }
 
-        // --- EXPORT/PDF/WA ---
         function printInvoice(id){ 
             const o=orders.find(x=>x.id==id); if(!o)return; 
             const { jsPDF } = window.jspdf; const doc = new jsPDF(); 
