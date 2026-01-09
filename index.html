@@ -88,6 +88,25 @@
             background: #fff;
         }
 
+        /* Color Picker Styling */
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            padding: 0;
+            overflow: hidden;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #ccc;
+        }
+
         .login-overlay { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(20px); }
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -268,14 +287,21 @@
                         <textarea id="custAddress" rows="2" class="w-full rounded-xl p-3" placeholder="Full address details..."></textarea>
                     </div>
                     
-                    <div class="md:col-span-3 border-2 border-dashed border-fuchsia-200 rounded-2xl p-6 text-center hover:border-fuchsia-400 transition bg-fuchsia-50/30 cursor-pointer" onclick="document.getElementById('designImageInput').click()">
-                        <label class="block text-xs font-bold text-fuchsia-400 uppercase mb-2 cursor-pointer">Design / Fabric Photo</label>
-                        <input type="file" id="designImageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
-                        <div id="imagePreviewArea" class="flex flex-col items-center">
-                            <svg id="uploadIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-fuchsia-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                            <span id="uploadText" class="text-sm text-fuchsia-600 font-medium bg-white px-4 py-1 rounded-full shadow-sm">Click to upload</span>
-                            <img id="designPreview" class="hidden max-h-48 rounded-xl shadow-lg mt-4 border-4 border-white">
-                            <input type="hidden" id="designImageBase64">
+                    <div class="md:col-span-3 grid grid-cols-10 gap-4">
+                        <div class="col-span-2 md:col-span-1 flex flex-col items-center justify-center p-2 border-2 border-dashed border-fuchsia-200 rounded-2xl bg-fuchsia-50/30">
+                            <label class="text-[10px] font-bold text-fuchsia-400 uppercase mb-2">Color</label>
+                            <input type="color" id="orderColor" value="#d946ef" class="w-10 h-10 shadow-md">
+                        </div>
+
+                        <div class="col-span-8 md:col-span-9 border-2 border-dashed border-fuchsia-200 rounded-2xl p-6 text-center hover:border-fuchsia-400 transition bg-fuchsia-50/30 cursor-pointer" onclick="document.getElementById('designImageInput').click()">
+                            <label class="block text-xs font-bold text-fuchsia-400 uppercase mb-2 cursor-pointer">Design / Fabric Photo</label>
+                            <input type="file" id="designImageInput" accept="image/*" class="hidden" onchange="handleImageUpload(this)">
+                            <div id="imagePreviewArea" class="flex flex-col items-center">
+                                <svg id="uploadIcon" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-fuchsia-300 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                <span id="uploadText" class="text-sm text-fuchsia-600 font-medium bg-white px-4 py-1 rounded-full shadow-sm">Click to upload</span>
+                                <img id="designPreview" class="hidden max-h-48 rounded-xl shadow-lg mt-4 border-4 border-white">
+                                <input type="hidden" id="designImageBase64">
+                            </div>
                         </div>
                     </div>
 
@@ -334,16 +360,15 @@
                             </div>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <div><label class="text-xs font-bold text-slate-400">Total Fabric & Dye</label><input type="number" id="costFabric" value="0" class="w-full rounded-lg p-2 mt-1 bg-slate-50 font-bold text-slate-600" readonly></div>
-                        <div><label class="text-xs font-bold text-slate-400">Extra Dyeing (Global)</label><input type="number" id="costDye" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
-                        <div><label class="text-xs font-bold text-slate-400">Tailoring/Labor</label><input type="number" id="costLabor" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+                        <div><label class="text-xs font-bold text-slate-400">Total Fabric</label><input type="number" id="costFabric" value="0" class="w-full rounded-lg p-2 mt-1 bg-slate-50 font-bold text-slate-600" readonly></div>
+                        <div><label class="text-xs font-bold text-slate-400">Extra Dyeing</label><input type="number" id="costDye" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
+                        <div><label class="text-xs font-bold text-slate-400">Labor/Stitching</label><input type="number" id="costLabor" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
                         <div><label class="text-xs font-bold text-slate-400">Handwork</label><input type="number" id="costHandwork" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
                         <div><label class="text-xs font-bold text-slate-400">Packing</label><input type="number" id="costPacking" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
-                        <div><label class="text-xs font-bold text-slate-400">Delivery</label><input type="number" id="costDelivery" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
                     </div>
                     
-                    <div class="border-t border-violet-200/50 my-6 pt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                    <div class="border-t border-violet-200/50 my-6 pt-6 grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                         <div>
                             <label class="text-xs font-bold text-slate-400 uppercase">Total Expenses</label>
                             <p id="displayTotalCost" class="text-xl font-bold text-slate-500 mt-1">₹0</p>
@@ -353,17 +378,21 @@
                             <input type="number" id="salePrice" class="w-full border-2 border-violet-300 rounded-xl p-3 mt-1 font-bold text-lg text-violet-900" oninput="calcTotal()">
                         </div>
                         <div>
+                            <label class="text-xs font-bold text-fuchsia-700 uppercase">Delivery Charge</label>
+                            <input type="number" id="deliveryCharge" value="0" class="w-full border-2 border-fuchsia-200 rounded-xl p-3 mt-1 font-bold text-fuchsia-700" oninput="calcTotal()">
+                        </div>
+                        <div>
                             <label class="text-xs font-bold text-emerald-700 uppercase">Advance Paid</label>
                             <input type="number" id="advance" value="0" class="w-full border-2 border-emerald-300 rounded-xl p-3 mt-1 font-bold text-emerald-700" oninput="calcTotal()">
                         </div>
-                        <div class="md:col-span-3 text-right pt-2 flex justify-end gap-6 items-center">
+                        <div class="md:col-span-4 text-right pt-2 flex justify-between items-center bg-white/50 p-4 rounded-xl border border-violet-100">
                             <div>
                                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Estimated Profit</span>
                                 <span id="displayProfit" class="text-xl font-bold text-emerald-600">₹0</span>
                             </div>
-                            <div class="bg-violet-50 px-4 py-2 rounded-xl border border-violet-200">
+                            <div class="text-right">
                                 <span class="text-xs font-bold text-violet-500 uppercase tracking-wider block">Balance Due</span>
-                                <span id="displayBalance" class="text-2xl font-bold text-violet-800">₹0</span>
+                                <span id="displayBalance" class="text-3xl font-bold text-violet-800">₹0</span>
                             </div>
                         </div>
                     </div>
@@ -435,7 +464,7 @@
             }
         });
 
-        // --- NEW: Multi Fabric Logic with Dyeing ---
+        // --- Multi Fabric Logic with Dyeing ---
         function addFabricRow(type="", price="", meters="", dye="") {
             const div = document.createElement('div');
             div.className = "grid grid-cols-12 gap-2 fabric-row items-center";
@@ -457,7 +486,7 @@
                 <div class="col-span-1 text-center"><button onclick="this.parentElement.parentElement.remove(); calcFabric()" class="text-red-400 font-bold hover:text-red-600">×</button></div>
             `;
             document.getElementById('fabricRowsContainer').appendChild(div);
-            if(!isCustom && type) calcFabric(); // Recalculate immediate if loading
+            if(!isCustom && type) calcFabric(); 
         }
 
         function checkOther(select) {
@@ -501,16 +530,17 @@
             const labor = parseFloat(document.getElementById('costLabor').value) || 0;
             const handwork = parseFloat(document.getElementById('costHandwork').value) || 0;
             const pack = parseFloat(document.getElementById('costPacking').value) || 0;
-            const delivery = parseFloat(document.getElementById('costDelivery').value) || 0;
             
-            const total = fabric + dye + labor + handwork + pack + delivery;
-            document.getElementById('displayTotalCost').innerText = `₹${total.toFixed(2)}`;
+            // Note: Delivery charge removed from Expenses
+            const totalExpenses = fabric + dye + labor + handwork + pack;
+            document.getElementById('displayTotalCost').innerText = `₹${totalExpenses.toFixed(2)}`;
             
             const sale = parseFloat(document.getElementById('salePrice').value) || 0;
+            const deliveryCharge = parseFloat(document.getElementById('deliveryCharge').value) || 0;
             const advance = parseFloat(document.getElementById('advance').value) || 0;
-            const profit = sale - total;
             
-            const balance = (sale - advance) + delivery;
+            const profit = sale - totalExpenses; // Profit excludes delivery (pass-through)
+            const balance = (sale + deliveryCharge) - advance;
 
             document.getElementById('displayProfit').innerText = `₹${profit.toFixed(2)}`;
             document.getElementById('displayProfit').className = profit >= 0 ? "text-xl font-bold text-emerald-600" : "text-xl font-bold text-rose-600";
@@ -561,10 +591,10 @@
             const labor = parseFloat(document.getElementById('costLabor').value) || 0;
             const handwork = parseFloat(document.getElementById('costHandwork').value) || 0;
             const pack = parseFloat(document.getElementById('costPacking').value) || 0;
-            const delivery = parseFloat(document.getElementById('costDelivery').value) || 0;
-            const totalCost = fabric + dye + labor + handwork + pack + delivery;
+            const totalCost = fabric + dye + labor + handwork + pack; // Excludes Delivery
 
             const sale = parseFloat(price) || 0;
+            const deliveryCharge = parseFloat(document.getElementById('deliveryCharge').value) || 0;
             const advance = parseFloat(document.getElementById('advance').value) || 0;
             const profit = sale - totalCost;
 
@@ -616,6 +646,7 @@
                 phone: document.getElementById('custPhone').value,
                 address: document.getElementById('custAddress').value,
                 item: item,
+                color: document.getElementById('orderColor').value,
                 image: document.getElementById('designImageBase64').value,
                 status: document.getElementById('orderStatus').value,
                 measurements: {
@@ -630,8 +661,8 @@
                     custom: customMeas
                 },
                 fabricDetails: fabricArr, 
-                costs: { fabric, dye, labor, handwork, pack, delivery, totalCost },
-                salePrice: sale, advance, profit
+                costs: { fabric, dye, labor, handwork, pack, totalCost },
+                salePrice: sale, deliveryCharge, advance, profit
             };
 
             db.ref('users/' + currentUser.uid + '/orders/' + id).set(orderData)
@@ -686,6 +717,7 @@
             document.getElementById('modalTitle').innerText=editId?'Edit Order':'New Order';
             document.getElementById('fabricRowsContainer').innerHTML = ''; // Reset fabrics
             document.querySelectorAll('.custom-measure-row').forEach(e => e.remove());
+            document.getElementById('orderColor').value = "#d946ef"; // default
 
             if(!editId) {
                 document.getElementById('dateOrder').valueAsDate = new Date();
@@ -705,10 +737,12 @@
                     document.getElementById('custPhone').value=o.phone||'';
                     document.getElementById('custAddress').value=o.address||'';
                     document.getElementById('itemType').value=o.item;
+                    document.getElementById('orderColor').value = o.color || "#d946ef";
                     document.getElementById('orderStatus').value=o.status;
                     document.getElementById('dateOrder').value=o.orderDate||'';
                     document.getElementById('dateDelivery').value=o.deliveryDate||'';
                     document.getElementById('salePrice').value=o.salePrice;
+                    document.getElementById('deliveryCharge').value=o.deliveryCharge||0;
                     document.getElementById('advance').value=o.advance||0;
                     
                     const c = o.costs || {};
@@ -716,7 +750,6 @@
                     document.getElementById('costLabor').value=c.labor||0;
                     document.getElementById('costHandwork').value=c.handwork||0;
                     document.getElementById('costPacking').value=c.pack||0;
-                    document.getElementById('costDelivery').value=c.delivery||0;
                     
                     if(o.fabricDetails && Array.isArray(o.fabricDetails)) {
                         o.fabricDetails.forEach(f => addFabricRow(f.type, f.price, f.meters, f.dye));
@@ -787,8 +820,11 @@
                         <div class="text-[10px] text-slate-400 font-mono tracking-wider">${o.orderId || o.id}</div>
                     </td>
                     <td class="px-6 py-4">
-                        <div class="font-semibold text-slate-700 text-sm mb-1">${safe(o.item)}</div>
-                        <span class="text-[10px] font-bold px-2.5 py-1 rounded-full ${getStatusClass(o.status)}">${safe(o.status)}</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full shadow-sm" style="background-color: ${o.color || '#ddd'};" title="Color"></div>
+                            <div class="font-semibold text-slate-700 text-sm">${safe(o.item)}</div>
+                        </div>
+                        <span class="text-[10px] font-bold px-2.5 py-1 rounded-full ${getStatusClass(o.status)} mt-1 inline-block">${safe(o.status)}</span>
                     </td>
                     <td class="px-6 py-4 text-xs ${dateStyle}">
                         <div class="flex flex-col gap-1">
@@ -818,9 +854,9 @@
             const totals = orders.reduce((acc, o) => {
                 const c = o.costs || {};
                 acc.fabric += c.fabric || 0; acc.dye += c.dye || 0; acc.labor += c.labor || 0;
-                acc.handwork += c.handwork || 0; acc.pack += c.pack || 0; acc.delivery += c.delivery || 0;
+                acc.handwork += c.handwork || 0; acc.pack += c.pack || 0;
                 return acc;
-            }, { fabric:0, dye:0, labor:0, handwork:0, pack:0, delivery:0 });
+            }, { fabric:0, dye:0, labor:0, handwork:0, pack:0 });
             
             const totalExp = Object.values(totals).reduce((a,b)=>a+b,0);
             const getPct = (v) => totalExp > 0 ? (v/totalExp*100).toFixed(0) : 0;
@@ -884,11 +920,11 @@
 
             const finalY = doc.lastAutoTable.finalY + 10;
             doc.text(`Total:`, 150, finalY); doc.text(`Rs. ${o.salePrice}`, 190, finalY, {align:'right'});
-            doc.text(`Advance:`, 150, finalY+6); doc.text(`- Rs. ${o.advance||0}`, 190, finalY+6, {align:'right'});
-            doc.text(`Delivery:`, 150, finalY+12); doc.text(`+ Rs. ${o.costs?.delivery||0}`, 190, finalY+12, {align:'right'});
+            doc.text(`Delivery Charge:`, 150, finalY+6); doc.text(`+ Rs. ${o.deliveryCharge||0}`, 190, finalY+6, {align:'right'});
+            doc.text(`Advance:`, 150, finalY+12); doc.text(`- Rs. ${o.advance||0}`, 190, finalY+12, {align:'right'});
             doc.setDrawColor(200); doc.line(150, finalY+15, 190, finalY+15);
             doc.setFont("helvetica", "bold"); doc.setTextColor(134, 25, 143);
-            doc.text(`Due:`, 150, finalY+22); doc.text(`Rs. ${(o.salePrice - (o.advance||0) + (o.costs?.delivery||0))}`, 190, finalY+22, {align:'right'});
+            doc.text(`Due:`, 150, finalY+22); doc.text(`Rs. ${(o.salePrice + (o.deliveryCharge||0) - (o.advance||0))}`, 190, finalY+22, {align:'right'});
             
             doc.setFont("helvetica", "italic"); doc.setFontSize(8); doc.setTextColor(150);
             doc.text("Thank you for your business. No refunds on custom orders.", 105, 280, {align:'center'});
@@ -908,20 +944,20 @@
             const id = parseInt(document.getElementById('wa-order-id').value);
             const o = orders.find(x => x.id === id);
             printInvoice(id);
-            const balance = (o.salePrice - (o.advance || 0) + (o.costs?.delivery||0));
-            const msg = `*INVOICE: ${o.orderId}* %0A-----------------%0AItem: ${o.item}%0ATotal: ₹${o.salePrice}%0AAdvance: ₹${o.advance||0}%0A*Balance Due: ₹${balance}*%0A-----------------%0APlease find your invoice attached.`;
+            const balance = (o.salePrice + (o.deliveryCharge||0) - (o.advance || 0));
+            const msg = `*INVOICE: ${o.orderId}* %0A-----------------%0AItem: ${o.item}%0ATotal: ₹${o.salePrice}%0ADelivery: ₹${o.deliveryCharge||0}%0AAdvance: ₹${o.advance||0}%0A*Balance Due: ₹${balance}*%0A-----------------%0APlease find your invoice attached.`;
             setTimeout(() => { window.open(`https://wa.me/91${o.phone}?text=${msg}`, '_blank'); document.getElementById('whatsappModal').classList.add('hidden'); }, 1000);
         }
 
         function exportCSV() {
             if (!orders.length) return alert("No data.");
-            const headers = ["Order ID", "Date", "Customer", "Phone", "Address", "Item", "Status", "Delivery Date", "Sale Price", "Advance", "Profit", "Fabric Cost", "Dye Cost", "Handwork", "Labor", "Packing", "Delivery Chg"];
+            const headers = ["Order ID", "Date", "Customer", "Phone", "Address", "Item", "Status", "Delivery Date", "Sale Price", "Delivery Chg", "Advance", "Profit", "Fabric Cost", "Dye Cost", "Handwork", "Labor", "Packing"];
             const rows = orders.map(o => {
                 const c = o.costs || {};
                 const esc = (t) => `"${String(t || '').replace(/"/g, '""')}"`;
                 return [
                     o.orderId, o.orderDate, esc(o.customer), esc(o.phone), esc(o.address), esc(o.item), esc(o.status), o.deliveryDate,
-                    o.salePrice, o.advance, o.profit, c.fabric, c.dye, c.handwork, c.labor, c.pack, c.delivery
+                    o.salePrice, o.deliveryCharge, o.advance, o.profit, c.fabric, c.dye, c.handwork, c.labor, c.pack
                 ].join(",");
             });
             const csv = "\uFEFF" + headers.join(",") + "\n" + rows.join("\n");
