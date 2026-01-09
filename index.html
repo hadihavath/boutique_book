@@ -322,13 +322,21 @@
                             <label class="block text-xs font-bold text-violet-400 uppercase">Fabric Calculator</label>
                             <button onclick="addFabricRow()" class="text-xs bg-violet-100 text-violet-600 px-2 py-1 rounded font-bold hover:bg-violet-200 transition">+ Add Fabric</button>
                         </div>
+                        <div class="grid grid-cols-12 gap-2 mb-2 text-[10px] font-bold text-slate-400 uppercase px-1">
+                            <div class="col-span-3">Type</div>
+                            <div class="col-span-2">Price/M</div>
+                            <div class="col-span-2">Meters</div>
+                            <div class="col-span-2">Dyeing</div>
+                            <div class="col-span-2">Total</div>
+                            <div class="col-span-1"></div>
+                        </div>
                         <div id="fabricRowsContainer" class="space-y-2">
                             </div>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        <div><label class="text-xs font-bold text-slate-400">Total Fabric Cost</label><input type="number" id="costFabric" value="0" class="w-full rounded-lg p-2 mt-1 bg-slate-50 font-bold text-slate-600" readonly></div>
-                        <div><label class="text-xs font-bold text-slate-400">Dyeing Cost</label><input type="number" id="costDye" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
+                        <div><label class="text-xs font-bold text-slate-400">Total Fabric & Dye</label><input type="number" id="costFabric" value="0" class="w-full rounded-lg p-2 mt-1 bg-slate-50 font-bold text-slate-600" readonly></div>
+                        <div><label class="text-xs font-bold text-slate-400">Extra Dyeing (Global)</label><input type="number" id="costDye" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
                         <div><label class="text-xs font-bold text-slate-400">Tailoring/Labor</label><input type="number" id="costLabor" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
                         <div><label class="text-xs font-bold text-slate-400">Handwork</label><input type="number" id="costHandwork" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
                         <div><label class="text-xs font-bold text-slate-400">Packing</label><input type="number" id="costPacking" value="0" class="w-full rounded-lg p-2 mt-1" oninput="calcTotal()"></div>
@@ -427,22 +435,38 @@
             }
         });
 
-        // --- NEW: Multi Fabric Logic ---
-        function addFabricRow(type="", price="", meters="") {
+        // --- NEW: Multi Fabric Logic with Dyeing ---
+        function addFabricRow(type="", price="", meters="", dye="") {
             const div = document.createElement('div');
-            div.className = "grid grid-cols-10 gap-2 fabric-row items-center";
+            div.className = "grid grid-cols-12 gap-2 fabric-row items-center";
+            const isCustom = type && !['Silk','Cotton','Georgette','Velvet','Organza','Net','Crepe','Linen','Chiffon','Satin','Lining'].includes(type);
+            
             div.innerHTML = `
-                <div class="col-span-4">
-                    <select class="w-full rounded p-2 text-sm border-violet-100 fabric-type">
+                <div class="col-span-3 relative">
+                    <select class="w-full rounded p-2 text-sm border-violet-100 fabric-type ${isCustom ? 'hidden' : ''}" onchange="checkOther(this)">
                         <option value="" disabled ${type===""?'selected':''}>Type</option>
-                        ${['Silk','Cotton','Georgette','Velvet','Organza','Net','Crepe','Linen','Chiffon','Satin','Lining','Other'].map(o => `<option value="${o}" ${type===o?'selected':''}>${o}</option>`).join('')}
+                        ${['Silk','Cotton','Georgette','Velvet','Organza','Net','Crepe','Linen','Chiffon','Satin','Lining'].map(o => `<option value="${o}" ${type===o?'selected':''}>${o}</option>`).join('')}
+                        <option value="Other">Other</option>
                     </select>
+                    <input type="text" value="${isCustom ? type : ''}" placeholder="Fabric Name" class="w-full rounded p-2 text-sm border-violet-100 fabric-custom-type ${isCustom ? '' : 'hidden'}" onblur="if(!this.value) {this.classList.add('hidden'); this.previousElementSibling.classList.remove('hidden'); this.previousElementSibling.value='';}">
                 </div>
                 <div class="col-span-2"><input type="number" placeholder="₹/M" value="${price}" class="w-full rounded p-2 text-sm border-violet-100 fabric-price" oninput="calcFabric()"></div>
                 <div class="col-span-2"><input type="number" placeholder="Mtr" value="${meters}" class="w-full rounded p-2 text-sm border-violet-100 fabric-meter" oninput="calcFabric()"></div>
-                <div class="col-span-2 text-center"><button onclick="this.parentElement.parentElement.remove(); calcFabric()" class="text-red-400 font-bold hover:text-red-600">×</button></div>
+                <div class="col-span-2"><input type="number" placeholder="Dye" value="${dye}" class="w-full rounded p-2 text-sm border-violet-100 fabric-dye" oninput="calcFabric()"></div>
+                <div class="col-span-2"><input type="text" value="0" class="w-full rounded p-2 text-sm bg-slate-50 border-none font-bold text-slate-500 fabric-subtotal" readonly></div>
+                <div class="col-span-1 text-center"><button onclick="this.parentElement.parentElement.remove(); calcFabric()" class="text-red-400 font-bold hover:text-red-600">×</button></div>
             `;
             document.getElementById('fabricRowsContainer').appendChild(div);
+            if(!isCustom && type) calcFabric(); // Recalculate immediate if loading
+        }
+
+        function checkOther(select) {
+            if(select.value === 'Other') {
+                select.classList.add('hidden');
+                const input = select.nextElementSibling;
+                input.classList.remove('hidden');
+                input.focus();
+            }
         }
 
         function calcFabric() {
@@ -450,13 +474,16 @@
             document.querySelectorAll('.fabric-row').forEach(row => {
                 const p = parseFloat(row.querySelector('.fabric-price').value) || 0;
                 const m = parseFloat(row.querySelector('.fabric-meter').value) || 0;
-                total += (p * m);
+                const d = parseFloat(row.querySelector('.fabric-dye').value) || 0;
+                const sub = (p * m) + d;
+                row.querySelector('.fabric-subtotal').value = sub.toFixed(0);
+                total += sub;
             });
             document.getElementById('costFabric').value = total.toFixed(2);
             calcTotal();
         }
 
-        // --- NEW: Custom Measurements ---
+        // --- Custom Measurements ---
         function addCustomMeasurement(label="", val="") {
             const div = document.createElement('div');
             div.className = "relative group custom-measure-row";
@@ -470,7 +497,7 @@
 
         function calcTotal() {
             const fabric = parseFloat(document.getElementById('costFabric').value) || 0;
-            const dye = parseFloat(document.getElementById('costDye').value) || 0;
+            const dye = parseFloat(document.getElementById('costDye').value) || 0; // Global extra dye
             const labor = parseFloat(document.getElementById('costLabor').value) || 0;
             const handwork = parseFloat(document.getElementById('costHandwork').value) || 0;
             const pack = parseFloat(document.getElementById('costPacking').value) || 0;
@@ -483,9 +510,6 @@
             const advance = parseFloat(document.getElementById('advance').value) || 0;
             const profit = sale - total;
             
-            // Balance = (Sale Price + Delivery if you charge it separately, but usually Sale Price is inclusive or defined. Let's assume standard Balance = Sale - Advance + Delivery Charges added on top? 
-            // Standard accounting: If Sale Price is the finalized item price, and delivery is extra.
-            // Let's stick to the previous invoice logic: Balance = (Sale - Advance) + Delivery Cost (assuming customer pays delivery).
             const balance = (sale - advance) + delivery;
 
             document.getElementById('displayProfit').innerText = `₹${profit.toFixed(2)}`;
@@ -532,7 +556,6 @@
             btn.innerText = "Saving...";
             btn.disabled = true;
 
-            // Costs
             const fabric = parseFloat(document.getElementById('costFabric').value) || 0;
             const dye = parseFloat(document.getElementById('costDye').value) || 0;
             const labor = parseFloat(document.getElementById('costLabor').value) || 0;
@@ -545,16 +568,13 @@
             const advance = parseFloat(document.getElementById('advance').value) || 0;
             const profit = sale - totalCost;
 
-            // ID Logic
             const editId = document.getElementById('editId').value;
             const id = editId ? parseInt(editId) : Date.now();
             let orderIdStr;
 
             if (editId) {
-                // Editing existing
                 orderIdStr = orders.find(x => x.id == editId).orderId;
             } else {
-                // New ID: Start from 10001
                 let maxId = 10000;
                 if (orders.length > 0) {
                     orders.forEach(o => {
@@ -565,17 +585,20 @@
                 orderIdStr = (maxId + 1).toString();
             }
 
-            // Gather Fabrics
             const fabricArr = [];
             document.querySelectorAll('.fabric-row').forEach(row => {
+                const sel = row.querySelector('.fabric-type');
+                const inp = row.querySelector('.fabric-custom-type');
+                const finalType = sel.classList.contains('hidden') ? inp.value : sel.value;
+                
                 fabricArr.push({
-                    type: row.querySelector('.fabric-type').value,
+                    type: finalType || 'Unknown',
                     price: row.querySelector('.fabric-price').value,
-                    meters: row.querySelector('.fabric-meter').value
+                    meters: row.querySelector('.fabric-meter').value,
+                    dye: row.querySelector('.fabric-dye').value
                 });
             });
 
-            // Gather Custom Measurements
             const customMeas = [];
             document.querySelectorAll('.custom-measure-row').forEach(row => {
                 const l = row.querySelector('.custom-label').value;
@@ -662,19 +685,16 @@
             document.getElementById('editId').value=editId||'';
             document.getElementById('modalTitle').innerText=editId?'Edit Order':'New Order';
             document.getElementById('fabricRowsContainer').innerHTML = ''; // Reset fabrics
-            
-            // Cleanup custom measurements (remove ones that have class custom-measure-row)
             document.querySelectorAll('.custom-measure-row').forEach(e => e.remove());
 
             if(!editId) {
                 document.getElementById('dateOrder').valueAsDate = new Date();
-                // Predict next ID for display
                 let maxId = 10000;
                 if (orders.length > 0) {
                     orders.forEach(o => { const num = parseInt(o.orderId); if (!isNaN(num) && num > maxId) maxId = num; });
                 }
                 document.getElementById('orderIdDisplay').innerText = `ID: ${maxId + 1}`;
-                addFabricRow(); // Add one empty row by default
+                addFabricRow(); // Default row
             }
 
             if(editId) {
@@ -692,19 +712,16 @@
                     document.getElementById('advance').value=o.advance||0;
                     
                     const c = o.costs || {};
-                    // costFabric is readonly now, handled by rows
                     document.getElementById('costDye').value=c.dye||0;
                     document.getElementById('costLabor').value=c.labor||0;
                     document.getElementById('costHandwork').value=c.handwork||0;
                     document.getElementById('costPacking').value=c.pack||0;
                     document.getElementById('costDelivery').value=c.delivery||0;
                     
-                    // Populate Fabrics
                     if(o.fabricDetails && Array.isArray(o.fabricDetails)) {
-                        o.fabricDetails.forEach(f => addFabricRow(f.type, f.price, f.meters));
+                        o.fabricDetails.forEach(f => addFabricRow(f.type, f.price, f.meters, f.dye));
                     } else if(o.fabricDetails && !Array.isArray(o.fabricDetails)) {
-                        // Legacy single object support
-                        addFabricRow(o.fabricDetails.type, o.fabricDetails.price, o.fabricDetails.meters);
+                        addFabricRow(o.fabricDetails.type, o.fabricDetails.price, o.fabricDetails.meters, 0);
                     } else {
                         addFabricRow();
                     }
@@ -727,12 +744,11 @@
                         document.getElementById('mHip').value=m.hip||'';
                         document.getElementById('mOther').value=m.other||'';
                         
-                        // Populate custom measurements
                         if(m.custom && Array.isArray(m.custom)) {
                             m.custom.forEach(cm => addCustomMeasurement(cm.label, cm.value));
                         }
                     }
-                    calcFabric(); // This will trigger calcTotal
+                    calcFabric();
                 }
             }
             document.getElementById('orderModal').classList.remove('hidden');
@@ -839,10 +855,8 @@
 
             if (o.measurements) {
                 const m = o.measurements;
-                // Standard Measurements
                 doc.autoTable({ startY: 85, head: [['Length', 'Chest', 'Waist', 'Shldr', 'Sleeve']], body: [[m.len||'-', m.bust||'-', m.waist||'-', m.shoulder||'-', m.sleeve||'-']], theme: 'plain', styles: { fontSize: 9, cellPadding: 3 }, headStyles: { fontStyle: 'bold', textColor: 100 } });
                 
-                // Custom Measurements
                 if(m.custom && m.custom.length > 0) {
                    let customBody = [];
                    let row = [];
@@ -855,7 +869,6 @@
                 }
             }
 
-            // Construct Item Description including multiple fabrics
             let itemDesc = o.item;
             if(o.fabricDetails && Array.isArray(o.fabricDetails)) {
                 const fabricNames = o.fabricDetails.map(f => f.type).join(", ");
